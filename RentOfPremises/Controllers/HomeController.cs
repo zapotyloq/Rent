@@ -10,9 +10,10 @@ namespace RentOfPremises.Controllers
 {
     public class HomeController : Controller
     {
+        ApplicationContext db = new ApplicationContext();
         public IActionResult Index()
         {
-            return View();
+            return View("Index",db.RentOfPremises);
         }
 
         public IActionResult About()

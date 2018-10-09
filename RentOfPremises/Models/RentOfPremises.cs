@@ -10,7 +10,7 @@ namespace RentOfPremises.Models
         public int Id { get; set; }
         public int PremisesId { get; set; }
         public int OrganizationId { get; set; }
-        public DateTime ArrivalTime { get; set; }
+        public DateTime ArrivalDate { get; set; }
         public DateTime DateOfDeparture { get; set; }
     }
 }
