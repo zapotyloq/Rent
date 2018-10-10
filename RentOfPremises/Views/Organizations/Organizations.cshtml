@@ -1,0 +1,44 @@
+﻿@using RentOfPremises.Models
+@model OrganizationViewModel
+@{
+    ViewData["Title"] = "Organizations";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th> Номер </th>
+            <th> Имя </th>
+            <th> Почтовые данные </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Organizations)
+        {
+            <tr>
+                <td> @Html.DisplayFor(modelItem => item.Id) </td>
+                <td> @Html.DisplayFor(modelItem => item.Name) </td>
+                <td> @Html.DisplayFor(modelItem => item.Mail) </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Organizations"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-default btn">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Organizations"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-default btn">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+
