@@ -21,7 +21,7 @@
 </form>
 <br />
 <div class="cell">
-    <table class="table">
+    <table class="table"  id="data">
         <thead>
             <tr>
                 <th>
@@ -45,20 +45,21 @@
         <tbody>
             @foreach (Organization u in Model.Organizations)
             {
-                <tr><td>@u.Id</td><td>@u.Name></td><td>@u.Mail</td></tr>
+                <tr><td>@u.Id</td><td>@u.Name</td><td>@u.Mail</td></tr>
             }
         </tbody>
     </table>
     <page-link page-model="@Model.PageViewModel" page-action="Index"
                page-url-name="@(Model.FilterViewModel.SelectedName)"
                page-url-company="@(Model.FilterViewModel.SelectedId)"
-               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link></div>
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+</div>
 <form name="edit" class="cell">
     <h3>Редактирование данных</h3><br/>
     <table class="table">
         <tr>
             <td><label class="control-label">Номер</label></td>
-            <td colspan="2"><input type="text" name="number" class="form-control" /></td>
+            <td colspan="2"><input type="text" name="number" readonly class="form-control" /></td>
         </tr>
         <tr>
             <td><label class="control-label">Название</label></td>
@@ -69,9 +70,54 @@
             <td colspan="2"><input type="text" name="mail" class="form-control" /></td>
         </tr>
         <tr>
-            <td><input type="button" value="Добавить" class="btn btn-default" /></td>
-            <td><input type="button" value="Удалить" class="btn btn-default" /></td>
-            <td><input type="button" value="Обновить" class="btn btn-default" /></td>
+            <td><input type="button" name="add" value="Добавить" class="btn btn-default" /></td>
+            <td><input type="button" name="del" value="Удалить" class="btn btn-default" /></td>
+            <td><input type="button" name="upd" value="Обновить" class="btn btn-default" /></td>
         </tr>
     </table>
+    <div id="msg_display"></div>
 </form>
+<script type="text/javascript">
+    $(function () {
+        $('#data tbody tr').first().addClass('selected');
+        $('input[name=number]').val($('.selected td')[0].innerText);
+        $('input[name=name]').val($('.selected td')[1].innerText);
+        $('input[name=mail]').val($('.selected td')[2].innerText);
+
+        $('#data tbody tr').click(function () {
+            $('#data tbody tr').removeClass('selected');
+            $('input[name=number]').val($(this).children('td')[0].textContent);
+            $('input[name=name]').val($(this).children('td')[1].textContent);
+            $('input[name=mail]').val($(this).children('td')[2].textContent);
+            $(this).addClass('selected');
+        });
+
+        $('input[name=add]').click(function () {
+            $.getJSON('/Organizations/Insert?name=' + $('input[name=name]').val() +
+                '&mail=' + $('input[name=mail]').val(), null);
+            getMsg('Добавлено');
+        });
+
+        $('input[name=del]').click(function () {
+            $.getJSON('/Organizations/Delete?id=' + $('input[name=number]').val(), null);
+            $('.selected').remove();
+            getMsg('Удалено');
+        });
+
+        $('input[name=upd]').click(function () {
+            $.getJSON('/Organizations/Update?id=' + $('input[name=number]').val() + '&name=' + $('input[name=name]').val() +
+                '&mail=' + $('input[name=mail]').val(), null);
+            $('.selected').children('td')[1].textContent = $('input[name=name]').val();
+            $('.selected').children('td')[2].textContent = $('input[name=mail]').val();
+            getMsg('Обновлено');
+        });
+
+        function getMsg(msg) {
+            $('#msg_display').text(msg);
+            $('#msg_display').css('display', 'block');
+            $('#msg_display').fadeOut(2000, function () {
+                $('#msg_display').css('display', 'none');
+            });
+        }
+    });
+</script>

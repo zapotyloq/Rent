@@ -64,5 +64,50 @@ namespace RentOfPremises.Controllers
             };
             return View(viewModel);
         }
+
+        [HttpGet]
+        public ActionResult Insert(string name, string mail)
+        {
+            Organization organization = new Organization
+            {
+                Name = name,
+                Mail = mail
+            };
+            db.Organizations.Add(organization);
+            db.SaveChanges();
+            JsonResult data = Json(organization);
+            return data;
+        }
+
+        [HttpGet]
+        public ActionResult Delete(int id)
+        {
+            var organizations = db.Organizations.Where(c => c.Id == id);
+            Organization organization = null;
+            if (organizations != null)
+            {
+                organization = organizations.First();
+                db.Organizations.Remove(organization);
+                db.SaveChanges();
+            }
+            JsonResult data = Json(organization);
+            return data;
+        }
+
+        [HttpGet]
+        public ActionResult Update(int id, string name, string mail)
+        {
+            var organizations = db.Organizations.Where(c => c.Id == id);
+            Organization organization = null;
+            if (organizations != null)
+            {
+                organization = organizations.First();
+                organization.Name = name;
+                organization.Mail = mail;
+            }
+            db.SaveChanges();
+            JsonResult data = Json(organization);
+            return data;
+        }
     }
 }
