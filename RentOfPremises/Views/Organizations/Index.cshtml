@@ -16,40 +16,62 @@
         @Html.TextBox("Name", Model.FilterViewModel.SelectedName,
                 htmlAttributes: new { @class = "form-control" })
 
-        <input type="submit" value="Фильтр" class="btn btn-default" />
+        <input type="submit" value="Поиск" class="btn btn-default" />
     </div>
 </form>
 <br />
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            <a asp-action="Index"
-               asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
-               asp-route-name="@(Model.FilterViewModel.SelectedName)"
-               asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
-        </th>
-        <th>
-            <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
-               asp-route-name="@(Model.FilterViewModel.SelectedName)"
-               asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Название</a>
-        </th>
-        <th>
-            <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.MailSort)"
-               asp-route-name="@(Model.FilterViewModel.SelectedName)"
-               asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Почтовые данные</a>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (Organization u in Model.Organizations)
-    {
-        <tr><td>@u.Id</td><td>@u.Name></td><td>@u.Mail</td></tr>
-    }
-    </tbody>
-</table>
-
-<page-link page-model="@Model.PageViewModel" page-action="Index"
-           page-url-name="@(Model.FilterViewModel.SelectedName)"
-           page-url-company="@(Model.FilterViewModel.SelectedId)"
-           page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+<div class="cell">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Название</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.MailSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Почтовые данные</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Organization u in Model.Organizations)
+            {
+                <tr><td>@u.Id</td><td>@u.Name></td><td>@u.Mail</td></tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="Index"
+               page-url-name="@(Model.FilterViewModel.SelectedName)"
+               page-url-company="@(Model.FilterViewModel.SelectedId)"
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link></div>
+<form name="edit" class="cell">
+    <h3>Редактирование данных</h3><br/>
+    <table class="table">
+        <tr>
+            <td><label class="control-label">Номер</label></td>
+            <td colspan="2"><input type="text" name="number" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Название</label></td>
+            <td colspan="2"><input type="text" name="name" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Почтовые данные</label></td>
+            <td colspan="2"><input type="text" name="mail" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><input type="button" value="Добавить" class="btn btn-default" /></td>
+            <td><input type="button" value="Удалить" class="btn btn-default" /></td>
+            <td><input type="button" value="Обновить" class="btn btn-default" /></td>
+        </tr>
+    </table>
+</form>

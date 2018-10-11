@@ -1,0 +1,13 @@
+.cell {
+    display: table-cell;
+    padding-right: 25px;
+}
+form[name=edit] {
+    background: #eee;
+    border-radius: 5px;
+    padding: 10px;
+}
+tbody tr:hover {
+    background: border-box #eee;
+    cursor: pointer;
+}
