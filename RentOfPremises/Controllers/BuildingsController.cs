@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RentOfPremises.Models;
 using RentOfPremises.ViewModels;
-using RentOfPremises.ViewModels.Organizations;
+using RentOfPremises.ViewModels.Buildings;
 using Microsoft.EntityFrameworkCore;
 
 namespace RentOfPremises.Controllers
 {
-    public class OrganizationsController : Controller
+    public class BuildingsController : Controller
     {
         ApplicationContext db = new ApplicationContext();
         public async Task<IActionResult> Index(int? id, string name, int page = 1,
@@ -18,7 +18,7 @@ namespace RentOfPremises.Controllers
         {
             int pageSize = 10;  // количество элементов на странице
 
-            IQueryable<Organization> source = db.Organizations;
+            IQueryable<Building> source = db.Buildings;
 
             if (id != null && id != 0)
             {
@@ -46,6 +46,18 @@ namespace RentOfPremises.Controllers
                 case SortState.MailDesc:
                     source = source.OrderByDescending(s => s.Mail);
                     break;
+                case SortState.NumberOfStoreysAsc:
+                    source = source.OrderBy(s => s.NumberOfStoreys);
+                    break;
+                case SortState.NumberOfStoreysDesc:
+                    source = source.OrderByDescending(s => s.NumberOfStoreys);
+                    break;
+                case SortState.CharasteristicAsc:
+                    source = source.OrderBy(s => s.Characteristic);
+                    break;
+                case SortState.CharasteristicDesc:
+                    source = source.OrderByDescending(s => s.Characteristic);
+                    break;
                 default:
                     source = source.OrderBy(s => s.Id);
                     break;
@@ -58,55 +70,59 @@ namespace RentOfPremises.Controllers
             IndexViewModel viewModel = new IndexViewModel
             {
                 PageViewModel = pageViewModel,
-                Organizations = items,
+                Buildings = items,
                 SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(db.Organizations.ToList(), id, name)
+                FilterViewModel = new FilterViewModel(db.Buildings.ToList(), id, name)
             };
             return View(viewModel);
         }
 
         [HttpGet]
-        public ActionResult Insert(string name, string mail)
+        public ActionResult Insert(string name, string mail, int numberOfStoreys, string charasteristic)
         {
-            Organization organization = new Organization
+            Building building = new Building
             {
                 Name = name,
-                Mail = mail
+                Mail = mail,
+                NumberOfStoreys = numberOfStoreys,
+                Characteristic = charasteristic
             };
-            db.Organizations.Add(organization);
+            db.Buildings.Add(building);
             db.SaveChanges();
-            JsonResult data = Json(organization);
+            JsonResult data = Json(building);
             return data;
         }
 
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            Organization organization = null;
+            Building building = null;
             try
             {
-                organization = db.Organizations.Where(c => c.Id == id).First();
-                db.Organizations.Remove(organization);
+                building = db.Buildings.Where(c => c.Id == id).First();
+                db.Buildings.Remove(building);
                 db.SaveChanges();
             }
             catch { }
-            JsonResult data = Json(organization);
+            JsonResult data = Json(building);
             return data;
         }
 
         [HttpGet]
-        public ActionResult Update(int id, string name, string mail)
+        public ActionResult Update(int id, string name, string mail, int numberOfStoreys, string charasteristic)
         {
-            Organization organization = null;
+            Building building = null;
             try
             {
-                organization = db.Organizations.Where(c => c.Id == id).First();
-                organization.Name = name;
-                organization.Mail = mail;
+                building = db.Buildings.Where(c => c.Id == id).First();
+                building.Name = name;
+                building.Mail = mail;
+                building.NumberOfStoreys = numberOfStoreys;
+                building.Characteristic = charasteristic;
                 db.SaveChanges();
             }
             catch { }
-            JsonResult data = Json(organization);
+            JsonResult data = Json(building);
             return data;
         }
     }

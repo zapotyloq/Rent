@@ -113,6 +113,8 @@
         });
 
         function getMsg(msg) {
+            if (msg == undefined)
+                msg = 'Ошибка';
             $('#msg_display').text(msg);
             $('#msg_display').css('display', 'block');
             $('#msg_display').fadeOut(2000, function () {

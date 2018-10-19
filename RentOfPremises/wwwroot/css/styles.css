@@ -23,3 +23,6 @@ form[name=edit] {
     height: 30px;
     border-radius: 5px;
 }
+table {
+    max-width: 800px;
+}

@@ -1,0 +1,154 @@
+﻿@using RentOfPremises.Models
+@using RentOfPremises.ViewModels
+@using RentOfPremises.ViewModels.Buildings
+@model IndexViewModel
+@addTagHelper "*, RentOfPremises"
+@{
+    ViewData["Title"] = "Buildings";
+}
+<h1>Список зданий</h1>
+<form method="get">
+    <div class="form-inline">
+        @*<label class="control-label">Номер: </label>
+            @Html.TextBox("Id", Model.IndexViewModel.SelectedId, htmlAttributes: new { @class = "form-control" })*@
+
+        <label class="control-label">Название: </label>
+        @Html.TextBox("Name", Model.FilterViewModel.SelectedName,
+                htmlAttributes: new { @class = "form-control" })
+
+        <input type="submit" value="Поиск" class="btn btn-default" />
+    </div>
+</form>
+<br />
+<div class="cell">
+    <table class="table"  id="data">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.NameSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Название</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.MailSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Почтовые данные</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.NumberOfStoreysSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Количество этажей</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.CharasteristicSort)"
+                       asp-route-name="@(Model.FilterViewModel.SelectedName)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Характеристика</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Building u in Model.Buildings)
+            {
+                <tr><td>@u.Id</td><td>@u.Name</td><td>@u.Mail</td><td>@u.NumberOfStoreys</td><td>@u.Characteristic</td></tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="Index"
+               page-url-name="@(Model.FilterViewModel.SelectedName)"
+               page-url-company="@(Model.FilterViewModel.SelectedId)"
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+</div>
+<form name="edit" class="cell">
+    <h3>Редактирование данных</h3><br/>
+                                  <table class="table">
+                                      <tr>
+                                          <td><label class="control-label">Номер</label></td>
+                                          <td colspan="2"><input type="text" name="number" readonly class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Название</label></td>
+                                          <td colspan="2"><input type="text" name="name" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Почтовые данные</label></td>
+                                          <td colspan="2"><input type="text" name="mail" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Количество этажей</label></td>
+                                          <td colspan="2"><input type="number" name="number_of_storeys" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Характеристика</label></td>
+                                          <td colspan="2"><input type="text" name="charasteristic" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><input type="button" name="add" value="Добавить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="del" value="Удалить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="upd" value="Обновить" class="btn btn-default" /></td>
+                                      </tr>
+                                  </table>
+    <div id="msg_display"></div>
+</form>
+<script type="text/javascript">
+    $(function () {
+        $('#data tbody tr').first().addClass('selected');
+        $('input[name=number]').val($('.selected td')[0].innerText);
+        $('input[name=name]').val($('.selected td')[1].innerText);
+        $('input[name=mail]').val($('.selected td')[2].innerText);
+        $('input[name=number_of_storeys]').val($('.selected td')[3].innerText);
+        $('input[name=charasteristic]').val($('.selected td')[4].innerText);
+
+        $('#data tbody tr').click(function () {
+            $('#data tbody tr').removeClass('selected');
+            $('input[name=number]').val($(this).children('td')[0].textContent);
+            $('input[name=name]').val($(this).children('td')[1].textContent);
+            $('input[name=mail]').val($(this).children('td')[2].textContent);
+            $('input[name=number_of_storeys]').val($(this).children('td')[3].textContent);
+            $('input[name=charasteristic]').val($(this).children('td')[4].textContent);
+            $(this).addClass('selected');
+        });
+
+        $('input[name=add]').click(function () {
+            $.getJSON('/Buildings/Insert?name=' + $('input[name=name]').val() +
+                '&mail=' + $('input[name=mail]').val() +
+                '&numberOfStoreys=' + $('input[name=number_of_storeys]').val() +
+                '&charasteristic= ' + $('input[name=charasteristic]').val(), null);
+            getMsg('Добавлено');
+        });
+
+        $('input[name=del]').click(function () {
+            $.getJSON('/Buildings/Delete?id=' + $('input[name=number]').val(), null);
+            $('.selected').remove();
+            getMsg('Удалено');
+        });
+
+        $('input[name=upd]').click(function () {
+            $.getJSON('/Buildings/Update?id=' + $('input[name=number]').val() +
+                '&name=' + $('input[name=name]').val() +
+                '&mail=' + $('input[name=mail]').val() +
+                '&numberOfStoreys=' + $('input[name=number_of_storeys]').val() +
+                '&charasteristic= ' + $('input[name=charasteristic]').val(), null);
+            $('.selected').children('td')[1].textContent = $('input[name=name]').val();
+            $('.selected').children('td')[2].textContent = $('input[name=mail]').val();
+            $('.selected').children('td')[3].textContent = $('input[name=number_of_storeys]').val();
+            $('.selected').children('td')[4].textContent = $('input[name=charasteristic]').val();
+            getMsg('Обновлено');
+        });
+
+        function getMsg(msg) {
+            if (msg == undefined)
+                msg = 'Ошибка';
+            $('#msg_display').text(msg);
+            $('#msg_display').css('display', 'block');
+            $('#msg_display').fadeOut(2000, function () {
+                $('#msg_display').css('display', 'none');
+            });
+        }
+    });
+</script>
