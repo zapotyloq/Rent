@@ -25,5 +25,10 @@ namespace RentOfPremises.Models
             string connectionString = config.GetConnectionString("SQLConnection");
             var options = optionsBuilder.UseSqlServer(connectionString).Options;
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Building>().HasMany(p => p.Premises).WithOne(p => p.Building);
+        }
     }
 }

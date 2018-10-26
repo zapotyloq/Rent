@@ -1,0 +1,151 @@
+﻿@using RentOfPremises.Models
+@using RentOfPremises.ViewModels
+@using RentOfPremises.ViewModels.Premises
+@model IndexViewModel
+@addTagHelper "*, RentOfPremises"
+@{
+    ViewData["Title"] = "Premises";
+}
+<h1>Список организаций</h1>
+<form method="get">
+    <div class="form-inline">
+        <label class="control-label">Номер: </label>
+            @Html.TextBox("Id", Model.FilterViewModel.SelectedId, htmlAttributes: new { @class = "form-control" })
+
+        @*<label class="control-label">Название: </label>
+        @Html.TextBox("Name", Model.FilterViewModel.SelectedName,
+                htmlAttributes: new { @class = "form-control" })*@
+
+        <input type="submit" value="Поиск" class="btn btn-default" />
+    </div>
+</form>
+<br />
+<div class="cell">
+    <table class="table"  id="data">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.AreaSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Площадь</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BuildingNameSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Здание</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BuildingNameSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">План этажа</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BuildingNameSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Фотографии</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Premises u in Model.Premises)
+            {
+                <tr><td>@u.Id</td><td>@u.Area</td><td>@u.Building.Name</td>
+                                                  <td>@u.FloorPlan</td>
+                                                  <td>@u.Photos</td></tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="Index"
+               page-url-company="@(Model.FilterViewModel.SelectedId)"
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+</div>
+<form name="edit" class="cell">
+    <h3>Редактирование данных</h3><br/>
+                                  <table class="table">
+                                      <tr>
+                                          <td><label class="control-label">Номер</label></td>
+                                          <td colspan="2"><input type="text" name="number" readonly class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Площадь</label></td>
+                                          <td colspan="2"><input type="text" name="area" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Здание</label></td>
+                                          <td colspan="2"><input type="text" name="bldng" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">План Этажа</label></td>
+                                          <td colspan="2"><input type="text" name="floor" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Фотографии</label></td>
+                                          <td colspan="2"><input type="text" name="ph" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><input type="button" name="add" value="Добавить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="del" value="Удалить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="upd" value="Обновить" class="btn btn-default" /></td>
+                                      </tr>
+                                  </table>
+    <div id="msg_display"></div>
+</form>
+<script type="text/javascript">
+    $(function () {
+        $('#data tbody tr').first().addClass('selected');
+        $('input[name=number]').val($('.selected td')[0].innerText);
+        $('input[name=area]').val($('.selected td')[1].innerText);
+        $('input[name=bldng]').val($('.selected td')[2].nodeValue());
+        $('input[name=floor]').val($('.selected td')[3].innerText);
+        $('input[name=ph]').val($('.selected td')[4].innerText);
+
+        $('#data tbody tr').click(function () {
+            $('#data tbody tr').removeClass('selected');
+            $('input[name=number]').val($(this).children('td')[0].textContent);
+            $('input[name=area]').val($(this).children('td')[1].textContent);
+            $('input[name=bldng]').val($(this).children('td')[2].val());
+            $('input[name=floor]').val($(this).children('td')[3].textContent);
+            $('input[name=ph]').val($(this).children('td')[4].textContent);
+            $(this).addClass('selected');
+        });
+
+        $('input[name=add]').click(function () {
+            $.getJSON('/Premises/Insert?area=' + $('input[name=area]').val() +
+                '&buildingNumber=' + $('input[name=bldng]').val() +
+                '&floorPlan=' + $('input[name=floor]').val() +
+                '&photos=' + $('input[name=ph]').val(), null);
+            getMsg('Добавлено');
+        });
+
+        $('input[name=del]').click(function () {
+            $.getJSON('/Premises/Delete?id=' + $('input[name=number]').val(), null);
+            $('.selected').remove();
+            getMsg('Удалено');
+        });
+
+        $('input[name=upd]').click(function () {
+            $.getJSON('/Organizations/Update?id=' + $('input[name=number]').val() +
+                '&area=' + $('input[name=area]').val() +
+                '&buildingNumber=' + $('input[name=bldng]').val() +
+                '&floorPlan=' + $('input[name=floor]').val() +
+                '&photos=' + $('input[name=ph]').val(), null);
+            $('.selected').children('td')[1].textContent = $('input[name=name]').val();
+            $('.selected').children('td')[2].textContent = $('input[name=area]').val();
+            $('.selected').children('td')[3].textContent = $('input[name=bldng]').val();
+            $('.selected').children('td')[4].textContent = $('input[name=floor]').val();
+            $('.selected').children('td')[5].textContent = $('input[name=ph]').val();
+            getMsg('Обновлено');
+        });
+
+        function getMsg(msg) {
+            if (msg == undefined)
+                msg = 'Ошибка';
+            $('#msg_display').text(msg);
+            $('#msg_display').css('display', 'block');
+            $('#msg_display').fadeOut(2000, function () {
+                $('#msg_display').css('display', 'none');
+            });
+        }
+    });
+</script>
