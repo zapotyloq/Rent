@@ -12,5 +12,11 @@ namespace RentOfPremises.Models
         public int BuildingNumber { get; set; }
         public string FloorPlan { get; set; }
         public string Photos { get; set; }
+        public virtual Building Building { get; set; }
+        public virtual ICollection<RentOfPremises> RentOfPremises { get; set; }
+        public Premises()
+        {
+            RentOfPremises = new List<RentOfPremises>();
+        }
     }
 }

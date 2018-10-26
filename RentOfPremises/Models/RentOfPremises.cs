@@ -12,5 +12,12 @@ namespace RentOfPremises.Models
         public int OrganizationId { get; set; }
         public DateTime ArrivalDate { get; set; }
         public DateTime DateOfDeparture { get; set; }
+        public virtual Organization Organization { get; set; }
+        public virtual Premises Premises { get; set; }
+        public virtual ICollection<Invoice> Invoices { get; set; }
+        public RentOfPremises()
+        {
+            Invoices = new List<Invoice>();
+        }
     }
 }
