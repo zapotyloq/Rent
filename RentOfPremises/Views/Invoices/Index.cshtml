@@ -1,0 +1,175 @@
+﻿@using RentOfPremises.Models
+@using RentOfPremises.ViewModels
+@using RentOfPremises.ViewModels.Invoices
+@model IndexViewModel
+@addTagHelper "*, RentOfPremises"
+@{
+    ViewData["Title"] = "Invoices";
+}
+<h1>Счета-фактуры</h1>
+<form method="get">
+    <div class="form-inline">
+        <label class="control-label">Номер: </label>
+        @Html.TextBox("Id", Model.FilterViewModel.SelectedId, htmlAttributes: new { @class = "form-control" })
+
+        @*<label class="control-label">Название: </label>
+            @Html.TextBox("Name", Model.FilterViewModel.SelectedName,
+                    htmlAttributes: new { @class = "form-control" })*@
+
+        <input type="submit" value="Поиск" class="btn btn-default" />
+    </div>
+</form>
+<br />
+<div class="cell">
+    <table class="table" id="data">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.DateOfPaymentSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Дата Оплаты</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.RentIdSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер аренды</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.MounthSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер месяца</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.TotalSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Сумма</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BaileeSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Ответственное лицо</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Invoice u in Model.Invoices)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@String.Format("{0:yyyy-MM-dd}", u.DateOfPayment)</td>
+                    <td id="@u.RentId">@u.RentId</td>
+                    <td>@u.Mounth</td>
+                    <td>@u.Total.ToString("0.00", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                    <td>@u.Bailee</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="Index"
+               page-url-company="@(Model.FilterViewModel.SelectedId)"
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+</div>
+<form name="edit" class="cell">
+    <h3>Редактирование данных</h3><br />
+    <table class="table">
+        <tr>
+            <td><label class="control-label">Номер</label></td>
+            <td colspan="2"><input type="text" name="number" readonly class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Дата оплаты</label></td>
+            <td colspan="2"><input type="date" name="dop" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Номер аренды</label></td>
+            <td colspan="2">
+                <select name="rents">
+                    @foreach (RentOfPremises b in Model.Rents)
+                    {
+                        <option id="@b.Id">@b.Id</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Номер месяца</label></td>
+            <td colspan="2"><input type="number" name="mounth" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Сумма</label></td>
+            <td colspan="2"><input type="number" name="total" pattern="[0-9]+([\.,][0-9]+)?"class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><label class="control-label">Ответственное лицо</label></td>
+            <td colspan="2"><input type="text" name="bailee" class="form-control" /></td>
+        </tr>
+        <tr>
+            <td><input type="button" name="add" value="Добавить" class="btn btn-default" /></td>
+            <td><input type="button" name="del" value="Удалить" class="btn btn-default" /></td>
+            <td><input type="button" name="upd" value="Обновить" class="btn btn-default" /></td>
+        </tr>
+    </table>
+    <div id="msg_display"></div>
+</form>
+<script type="text/javascript">
+    $(function () {
+        $('#data tbody tr').first().addClass('selected');
+        $('input[name=number]').val($('.selected td')[0].innerText);
+        $('input[name=dop]').val($('.selected td')[1].innerHTML);
+        $('select[name=rents]').val($('.selected td')[2].innerHTML);
+        $('input[name=mounth]').val($('.selected td')[3].innerHTML);
+        $('input[name=total]').val($('.selected td')[4].innerHTML);
+        $('input[name=bailee]').val($('.selected td')[5].innerHTML);
+
+        $('#data tbody tr').click(function () {
+            $('#data tbody tr').removeClass('selected');
+            $('input[name=number]').val($(this).children('td')[0].textContent);
+            $('input[name=dop]').val($(this).children('td')[1].textContent);
+            $('select[name=rents]').val($(this).children('td')[2].textContent);
+            $('input[name=mounth]').val($(this).children('td')[3].textContent);
+            $('input[name=total]').val($(this).children('td')[4].textContent);
+            $('input[name=bailee]').val($(this).children('td')[5].textContent);
+            $(this).addClass('selected');
+        });
+
+        $('input[name=add]').click(function () {
+            $.getJSON('/Invoices/Insert?dateOfPayment=' + $('input[name=dop]').val() +
+                '&rentId=' + $('select[name=rents]').find(":selected").attr("id") +
+                '&mounth=' + $('input[name=mounth]').val() +
+                '&total=' + $('input[name=total]').val() +
+                '&bailee=' + $('input[name=bailee]').val(), null);
+            getMsg('Добавлено');
+        });
+
+        $('input[name=del]').click(function () {
+            $.getJSON('/Invoices/Delete?id=' + $('input[name=number]').val(), null);
+            $('.selected').remove();
+            getMsg('Удалено');
+        });
+
+        $('input[name=upd]').click(function () {
+            $.getJSON('/Invoices/Update?id=' + $('input[name=number]').val() +
+                '&dateOfPayment=' + $('select[name = dop]').val() +
+                '&rentId=' + $('select[name=rents]').find(":selected").attr("id") +
+                '&mounth=' + $('input[name=mounth]').val() +
+                '&total=' + $('input[name=total]').val() +
+                '&bailee=' + $('input[name=bailee]').val(), null);
+            $('.selected').children('td')[1].textContent = $('input[name=dop]').val();
+            $('.selected').children('td')[2].textContent = $('select[name=rents]').val();
+            $('.selected').children('td')[3].textContent = $('input[name=mounth]').val();
+            $('.selected').children('td')[4].textContent = $('input[name=total]').val();
+            $('.selected').children('td')[5].textContent = $('input[name=bailee').val();
+            getMsg('Обновлено');
+        });
+
+        function getMsg(msg) {
+            if (msg == undefined)
+                msg = 'Ошибка';
+            $('#msg_display').text(msg);
+            $('#msg_display').css('display', 'block');
+            $('#msg_display').fadeOut(2000, function () {
+                $('#msg_display').css('display', 'none');
+            });
+        }
+    });
+</script>
