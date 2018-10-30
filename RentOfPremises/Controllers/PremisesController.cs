@@ -13,21 +13,22 @@ namespace RentOfPremises.Controllers
     public class PremisesController : Controller
     {
         ApplicationContext db = new ApplicationContext();
-        public async Task<IActionResult> Index(int? id, /*string name,*/ int page = 1,
+        public async Task<IActionResult> Index(int? id, string name, int page = 1,
             SortState sortOrder = SortState.IdAsc)
         {
             int pageSize = 10;  // количество элементов на странице
 
             IQueryable<Premises> source = db.Premises;
+            await source.ForEachAsync(d => d.Building = db.Buildings.Where(p => p.Id == d.BuildingNumber).First());
 
             if (id != null && id != 0)
             {
                 source = source.Where(p => p.Id == id);
             }
-            //if (!String.IsNullOrEmpty(name))
-            //{
-            //    source = source.Where(p => p.Name.Contains(name));
-            //}
+            if (!String.IsNullOrEmpty(name))
+            {
+                source = source.Where(p => p.Building.Name.Contains(name));
+            }
 
             switch (sortOrder)
             {
@@ -59,8 +60,9 @@ namespace RentOfPremises.Controllers
             {
                 PageViewModel = pageViewModel,
                 Premises = items,
+                Buildings = db.Buildings,
                 SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(db.Premises.ToList(), id)
+                FilterViewModel = new FilterViewModel(db.Premises.ToList(), id, name)
             };
             return View(viewModel);
         }
@@ -72,6 +74,7 @@ namespace RentOfPremises.Controllers
             {
                 Area = area,
                 BuildingNumber = buildingNumber,
+                Building = db.Buildings.Where(p => p.Id == buildingNumber).First(),
                 FloorPlan = floorPlan,
                 Photos = photos
             };
@@ -105,6 +108,7 @@ namespace RentOfPremises.Controllers
                 premises = db.Premises.Where(c => c.Id == id).First();
                 premises.Area = area;
                 premises.BuildingNumber = buildingNumber;
+                premises.Building = db.Buildings.Where(p => p.Id == buildingNumber).First();
                 premises.FloorPlan = floorPlan;
                 premises.Photos = photos;
                 db.SaveChanges();

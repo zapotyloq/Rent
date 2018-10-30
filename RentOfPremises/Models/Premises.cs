@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentOfPremises.Models
 {
@@ -12,11 +13,10 @@ namespace RentOfPremises.Models
         public int BuildingNumber { get; set; }
         public string FloorPlan { get; set; }
         public string Photos { get; set; }
+
+        //[ForeignKey("BuildingNumber")]
         public virtual Building Building { get; set; }
+
         public virtual ICollection<RentOfPremises> RentOfPremises { get; set; }
-        public Premises()
-        {
-            RentOfPremises = new List<RentOfPremises>();
-        }
     }
 }

@@ -101,7 +101,7 @@
         $('input[name=number]').val($('.selected td')[0].innerText);
         $('input[name=name]').val($('.selected td')[1].innerText);
         $('input[name=mail]').val($('.selected td')[2].innerText);
-        $('input[name=number_of_storeys]').val($('.selected td')[3].innerText);
+        $('input[name=number_of_storeys]').val($('.selected td')[3].innerHTML);
         $('input[name=charasteristic]').val($('.selected td')[4].innerText);
 
         $('#data tbody tr').click(function () {

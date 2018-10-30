@@ -28,7 +28,8 @@ namespace RentOfPremises.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Building>().HasMany(p => p.Premises).WithOne(p => p.Building);
+            modelBuilder.Entity<Building>().HasMany(p => p.Premises).WithOne(p => p.Building).HasForeignKey(p => p.BuildingNumber);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

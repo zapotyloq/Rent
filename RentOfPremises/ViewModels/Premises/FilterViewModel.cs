@@ -11,12 +11,14 @@ namespace RentOfPremises.ViewModels.Premises
     {
         public SelectList Premises { get; private set; }
         public int? SelectedId { get; private set; }
+        public string SelectedName { get; private set; }
 
-        public FilterViewModel(List<Models.Premises> premises, int? id)
+        public FilterViewModel(List<Models.Premises> premises, int? id, string name)
         {
-            premises.Insert(0, new Models.Premises { Id = (int)id });
-            Premises = new SelectList(premises, "Id", "", id);
+            premises.Insert(0, new Models.Premises { Id = 0 });
+            Premises = new SelectList(premises, "Id", name, id);
             SelectedId = id;
+            SelectedName = name;
         }
     }
 }

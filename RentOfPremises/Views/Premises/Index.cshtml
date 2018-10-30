@@ -50,7 +50,7 @@
         <tbody>
             @foreach (Premises u in Model.Premises)
             {
-                <tr><td>@u.Id</td><td>@u.Area</td><td>@u.Building.Name</td>
+                <tr><td>@u.Id</td><td>@u.Area</td><td id="@u.BuildingNumber">@u.Building.Name</td>
                                                   <td>@u.FloorPlan</td>
                                                   <td>@u.Photos</td></tr>
             }
@@ -69,11 +69,18 @@
                                       </tr>
                                       <tr>
                                           <td><label class="control-label">Площадь</label></td>
-                                          <td colspan="2"><input type="text" name="area" class="form-control" /></td>
+                                          <td colspan="2"><input type="number" name="area" class="form-control" /></td>
                                       </tr>
                                       <tr>
                                           <td><label class="control-label">Здание</label></td>
-                                          <td colspan="2"><input type="text" name="bldng" class="form-control" /></td>
+                                          <td colspan="2">
+                                              <select name="bldng">
+                                                  @foreach (Building b in Model.Buildings)
+                                                  {
+                                                  <option id="@b.Id">@b.Name</option>
+                                                  }
+                                              </select>
+                                          </td>
                                       </tr>
                                       <tr>
                                           <td><label class="control-label">План Этажа</label></td>
@@ -95,8 +102,8 @@
     $(function () {
         $('#data tbody tr').first().addClass('selected');
         $('input[name=number]').val($('.selected td')[0].innerText);
-        $('input[name=area]').val($('.selected td')[1].innerText);
-        $('input[name=bldng]').val($('.selected td')[2].nodeValue());
+        $('input[name=area]').val($('.selected td')[1].innerHTML);
+        $('select[name=bldng]').val($('.selected td')[2].innerHTML);
         $('input[name=floor]').val($('.selected td')[3].innerText);
         $('input[name=ph]').val($('.selected td')[4].innerText);
 
@@ -104,7 +111,7 @@
             $('#data tbody tr').removeClass('selected');
             $('input[name=number]').val($(this).children('td')[0].textContent);
             $('input[name=area]').val($(this).children('td')[1].textContent);
-            $('input[name=bldng]').val($(this).children('td')[2].val());
+            $('select[name=bldng]').val($(this).children('td')[2].val());
             $('input[name=floor]').val($(this).children('td')[3].textContent);
             $('input[name=ph]').val($(this).children('td')[4].textContent);
             $(this).addClass('selected');
@@ -112,7 +119,7 @@
 
         $('input[name=add]').click(function () {
             $.getJSON('/Premises/Insert?area=' + $('input[name=area]').val() +
-                '&buildingNumber=' + $('input[name=bldng]').val() +
+                '&buildingNumber=' + $('select[name=bldng]').find(":selected").attr("id") +
                 '&floorPlan=' + $('input[name=floor]').val() +
                 '&photos=' + $('input[name=ph]').val(), null);
             getMsg('Добавлено');
@@ -125,19 +132,18 @@
         });
 
         $('input[name=upd]').click(function () {
-            $.getJSON('/Organizations/Update?id=' + $('input[name=number]').val() +
+            $.getJSON('/Premises/Update?id=' + $('input[name=number]').val() +
                 '&area=' + $('input[name=area]').val() +
-                '&buildingNumber=' + $('input[name=bldng]').val() +
+                '&buildingNumber=' + $('select[name=bldng]').find(":selected").attr("id") +
                 '&floorPlan=' + $('input[name=floor]').val() +
                 '&photos=' + $('input[name=ph]').val(), null);
-            $('.selected').children('td')[1].textContent = $('input[name=name]').val();
-            $('.selected').children('td')[2].textContent = $('input[name=area]').val();
-            $('.selected').children('td')[3].textContent = $('input[name=bldng]').val();
-            $('.selected').children('td')[4].textContent = $('input[name=floor]').val();
-            $('.selected').children('td')[5].textContent = $('input[name=ph]').val();
+            $('.selected').children('td')[1].textContent = $('input[name=area]').val();
+            $('.selected').children('td')[2].textContent = $('select[name=bldng]').val();
+            $('.selected').children('td')[3].textContent = $('input[name=floor]').val();
+            $('.selected').children('td')[4].textContent = $('input[name=ph]').val();
             getMsg('Обновлено');
         });
-
+    
         function getMsg(msg) {
             if (msg == undefined)
                 msg = 'Ошибка';
