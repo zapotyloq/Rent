@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Premises";
 }
-<h1>Список организаций</h1>
+<h1>Список помещений</h1>
 <form method="get">
     <div class="form-inline">
         <label class="control-label">Номер: </label>
@@ -38,12 +38,10 @@
                        asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Здание</a>
                 </th>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BuildingNameSort)"
-                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">План этажа</a>
+                    План этажа
                 </th>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.BuildingNameSort)"
-                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Фотографии</a>
+                    Фотографии
                 </th>
             </tr>
         </thead>
@@ -111,7 +109,7 @@
             $('#data tbody tr').removeClass('selected');
             $('input[name=number]').val($(this).children('td')[0].textContent);
             $('input[name=area]').val($(this).children('td')[1].textContent);
-            $('select[name=bldng]').val($(this).children('td')[2].val());
+            $('select[name=bldng]').val($(this).children('td')[2].textContent);
             $('input[name=floor]').val($(this).children('td')[3].textContent);
             $('input[name=ph]').val($(this).children('td')[4].textContent);
             $(this).addClass('selected');

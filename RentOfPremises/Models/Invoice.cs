@@ -13,6 +13,7 @@ namespace RentOfPremises.Models
         public int Mounth { get; set; }
         public double Total { get; set; }
         public string Bailee { get; set; }
+
         public virtual RentOfPremises RentOfPremises { get; set; }
     }
 }

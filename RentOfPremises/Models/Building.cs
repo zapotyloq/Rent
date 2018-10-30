@@ -16,6 +16,7 @@ namespace RentOfPremises.Models
         public string Mail { get; set; }
         public int NumberOfStoreys { get; set; }
         public string Characteristic { get; set; }
+
         public virtual ICollection<Premises> Premises { get; set; }
     }
 }
