@@ -7,6 +7,7 @@ using RentOfPremises.Models;
 using RentOfPremises.ViewModels;
 using RentOfPremises.ViewModels.Organizations;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 namespace RentOfPremises.Controllers
 {
@@ -61,6 +62,146 @@ namespace RentOfPremises.Controllers
                 Organizations = items,
                 SortViewModel = new SortViewModel(sortOrder),
                 FilterViewModel = new FilterViewModel(db.Organizations.ToList(), id, name)
+            };
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> InfoForThePeriod(string buildingName = "", string d0="01.01.1970", string d= "01.01.2030", int page = 1)
+        {
+            int pageSize = 10;  // количество элементов на странице
+            List<object[]> source = new List<object[]>();
+            using (var command = db.Database.GetDbConnection().CreateCommand())
+            {
+                DbParameter parameter = command.CreateParameter();
+                parameter.DbType = System.Data.DbType.String;
+                parameter.ParameterName = "@building_name";
+                parameter.Value = buildingName;
+                command.Parameters.Add(parameter);
+                DbParameter parameter2 = command.CreateParameter();
+                parameter2.DbType = System.Data.DbType.String;
+                parameter2.ParameterName = "@d0";
+                parameter2.Value = d0;
+                command.Parameters.Add(parameter2);
+                DbParameter parameter3 = command.CreateParameter();
+                parameter3.DbType = System.Data.DbType.String;
+                parameter3.ParameterName = "@d";
+                parameter3.Value = d;
+                command.Parameters.Add(parameter3);
+                command.CommandText = "my_proc1";
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Connection.Open();
+                DbDataReader reader = await command.ExecuteReaderAsync();
+                if (reader.HasRows)
+                {
+                    while(await reader.ReadAsync())
+                    {
+                        object[] item = new object[reader.FieldCount];
+                        reader.GetValues(item);
+                        source.Add(item);
+                    }
+                }
+                command.Connection.Close();
+            }
+
+            var count = source.Count;
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            ProcedureViewModel viewModel = new ProcedureViewModel
+            {
+                FilterViewModel = new FilterViewModel(source, buildingName, d0, d, db.Buildings.ToList()),
+                PageViewModel = pageViewModel,
+                Objects = items,
+            };
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> EnteredForThePeriod(string buildingName = "", string d0 = "01.01.1970", string d = "01.01.2030", int page = 1)
+        {
+            int pageSize = 10;  // количество элементов на странице
+            List<object[]> source = new List<object[]>();
+            using (var command = db.Database.GetDbConnection().CreateCommand())
+            {
+                DbParameter parameter = command.CreateParameter();
+                parameter.DbType = System.Data.DbType.String;
+                parameter.ParameterName = "@building_name";
+                parameter.Value = buildingName;
+                command.Parameters.Add(parameter);
+                DbParameter parameter2 = command.CreateParameter();
+                parameter2.DbType = System.Data.DbType.String;
+                parameter2.ParameterName = "@d0";
+                parameter2.Value = d0;
+                command.Parameters.Add(parameter2);
+                DbParameter parameter3 = command.CreateParameter();
+                parameter3.DbType = System.Data.DbType.String;
+                parameter3.ParameterName = "@d";
+                parameter3.Value = d;
+                command.Parameters.Add(parameter3);
+                command.CommandText = "my_proc2";
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Connection.Open();
+                DbDataReader reader = await command.ExecuteReaderAsync();
+                if (reader.HasRows)
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        object[] item = new object[reader.FieldCount];
+                        reader.GetValues(item);
+                        source.Add(item);
+                    }
+                }
+                command.Connection.Close();
+            }
+
+            var count = source.Count;
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            ProcedureViewModel viewModel = new ProcedureViewModel
+            {
+                FilterViewModel = new FilterViewModel(source, buildingName, d0, d, db.Buildings.ToList()),
+                PageViewModel = pageViewModel,
+                Objects = items,
+            };
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> Debtors(string d = "01.01.2030", int page = 1)
+        {
+            int pageSize = 10;  // количество элементов на странице
+            List<object[]> source = new List<object[]>();
+            using (var command = db.Database.GetDbConnection().CreateCommand())
+            {
+                DbParameter parameter = command.CreateParameter();
+                parameter.DbType = System.Data.DbType.String;
+                parameter.ParameterName = "@d";
+                parameter.Value = d;
+                command.Parameters.Add(parameter);
+                command.CommandText = "my_proc3";
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Connection.Open();
+                DbDataReader reader = await command.ExecuteReaderAsync();
+                if (reader.HasRows)
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        object[] item = new object[reader.FieldCount];
+                        reader.GetValues(item);
+                        source.Add(item);
+                    }
+                }
+                command.Connection.Close();
+            }
+
+            var count = source.Count;
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            ProcedureViewModel viewModel = new ProcedureViewModel
+            {
+                FilterViewModel = new FilterViewModel(source, d),
+                PageViewModel = pageViewModel,
+                Objects = items,
             };
             return View(viewModel);
         }

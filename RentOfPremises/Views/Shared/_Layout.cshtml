@@ -40,9 +40,9 @@
                         <ul class="dropdown-menu" role="menu">
                             <li><a asp-area="" asp-controller="Organizations" asp-action="Index">Список организаций</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Информация за период</a></li>
-                            <li><a href="#">Въехавшие в выбранный период</a></li>
-                            <li><a href="#">Должники на указанную дату</a></li>
+                            <li><a asp-area="" asp-controller="Organizations" asp-action="InfoForThePeriod">Информация за период</a></li>
+                            <li><a asp-area="" asp-controller="Organizations" asp-action="EnteredForThePeriod">Въехавшие в здание за период</a></li>
+                            <li><a asp-area="" asp-controller="Organizations" asp-action="Debtors">Должники на указанную дату</a></li>
                         </ul>
                     </li>
                     <li><a asp-area="" asp-controller="Buildings" asp-action="Index">Здания</a></li>

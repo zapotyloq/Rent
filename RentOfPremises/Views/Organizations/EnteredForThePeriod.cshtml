@@ -1,0 +1,66 @@
+﻿@using RentOfPremises.Models
+@using RentOfPremises.ViewModels
+@using RentOfPremises.ViewModels.Organizations
+@model ProcedureViewModel
+@addTagHelper "*, RentOfPremises"
+@{
+    ViewData["Title"] = "EnteredForThePeriod";
+}
+<h1>
+    Полная информация по организациям-арендаторам, въехавших в выбранное здания
+    за период
+</h1>
+<form method="get">
+    <div class="form-inline">
+        <table>
+            <tr>
+                 <td><label class="control-label">Здание: </label></td>
+                 <td>@Html.DropDownList("buildingName", Model.FilterViewModel.Buildings, htmlAttributes: new { @class = "form-control" })
+                 </td>
+            </tr>
+            <tr>
+        <td><label class="control-label">Дата начала периода: </label></td>
+        <td>@Html.TextBox("d0", Model.FilterViewModel.FirstDate,
+                htmlAttributes: new { @class = "form-control", @type = "date"})</td></tr>
+
+        <tr><td><label class="control-label">Дата окончания периода: </label></td>
+        <td>@Html.TextBox("d", Model.FilterViewModel.SecondDate,
+                htmlAttributes: new { @class = "form-control", @type = "date"})</td></tr>
+            <tr><td colspan="2">
+        <input type="submit" value="Применить" class="btn btn-default" /></td></tr></table>
+    </div>
+</form>
+<br />
+<div class="cell">
+    <table class="table"  id="data">
+        <thead>
+            <tr>
+                <th>Здание</th>
+                <th>Номер организации</th>
+                <th>Название Организации</th>
+                <th>Почтовые данные</th>
+                <th>Номер помещения</th>
+                <th>Дата въезда</th>
+                <th>Дата выезда</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (object[] u in Model.Objects)
+            {
+            <tr>
+                <td>@u[0]</td>
+                <td>@u[1]</td>
+                <td>@u[2]</td>
+                <td>@u[3]</td>
+                <td>@u[4]</td>
+                <td>@u[5]</td>
+                <td>@u[6]</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="EnteredForThePeriod"
+               page-url-buildingName="@(Model.FilterViewModel.SelectedName)"
+               page-url-d0="@(Model.FilterViewModel.FirstDate)"
+               page-url-d="@(Model.FilterViewModel.SecondDate)"></page-link>
+</div>
