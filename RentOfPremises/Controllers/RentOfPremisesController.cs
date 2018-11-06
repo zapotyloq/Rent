@@ -12,7 +12,13 @@ namespace RentOfPremises.Controllers
 {
     public class RentOfPremisesController : Controller
     {
-        ApplicationContext db = new ApplicationContext();
+        ApplicationContext db;
+
+        public RentOfPremisesController(ApplicationContext db)
+        {
+            this.db = db;
+        }
+
         public async Task<IActionResult> Index(int? id, string name, int page = 1,
             SortState sortOrder = SortState.IdAsc)
         {

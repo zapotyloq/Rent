@@ -10,6 +10,13 @@ namespace RentOfPremises.Controllers
 {
     public class HomeController : Controller
     {
+        ApplicationContext db;
+
+        public HomeController(ApplicationContext db)
+        {
+            this.db = db;
+        }
+
         public IActionResult Index()
         {
             return View();
