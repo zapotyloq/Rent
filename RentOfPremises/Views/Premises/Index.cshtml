@@ -46,7 +46,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (Premises u in Model.Premises)
+            @foreach (Premise u in Model.Premises)
             {
                 <tr><td>@u.Id</td><td>@u.Area</td><td id="@u.BuildingNumber">@u.Building.Name</td>
                                                   <td>@u.FloorPlan</td>

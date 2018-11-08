@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using RentOfPremises.Models;
 
-namespace RentOfPremises.ViewModels.RentOfPremises
+namespace RentOfPremises.ViewModels.Rents
 {
     public class IndexViewModel
     {
-        public IEnumerable<Models.RentOfPremises> Rents { get; set; }
-        public IEnumerable<Models.Premises> Premises { get; set; }
+        public IEnumerable<Models.Rent> Rents { get; set; }
+        public IEnumerable<Models.Premise> Premises { get; set; }
         public IEnumerable<Models.Organization> Organizations { get; set; }
         public PageViewModel PageViewModel { get; set; }
         public FilterViewModel FilterViewModel { get; set; }

@@ -38,7 +38,7 @@
     <Content Update="Views\Premises\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\RentOfPremises\Index.cshtml">
+    <Content Update="Views\Rents\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

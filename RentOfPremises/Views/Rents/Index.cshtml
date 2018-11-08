@@ -1,6 +1,6 @@
 ﻿@using RentOfPremises.Models
 @using RentOfPremises.ViewModels
-@using RentOfPremises.ViewModels.RentOfPremises
+@using RentOfPremises.ViewModels.Rents
 @model IndexViewModel
 @addTagHelper "*, RentOfPremises"
 @{
@@ -30,7 +30,7 @@
                        asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
                 </th>
                 <th>
-                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.PremisesIdSort)"
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.PremiseIdSort)"
                        asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер помещения</a>
                 </th>
                 <th>
@@ -48,9 +48,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (RentOfPremises u in Model.Rents)
+            @foreach (Rent u in Model.Rents)
             {
-                <tr><td>@u.Id</td><td>@u.PremisesId</td><td id="@u.OrganizationId">@u.Organization.Name</td>
+                <tr><td>@u.Id</td><td>@u.PremiseId</td><td id="@u.OrganizationId">@u.Organization.Name</td>
                                                   <td>@String.Format("{0:yyyy-MM-dd}", u.ArrivalDate)</td>
                                                   <td>@String.Format("{0:yyyy-MM-dd}", u.DateOfDeparture)</td></tr>
             }
@@ -71,7 +71,7 @@
                                           <td><label class="control-label">Номер помещения</label></td>
                                           <td colspan="2">
                                               <select name="premises">
-                                                  @foreach (Premises b in Model.Premises)
+                                                  @foreach (Premise b in Model.Premises)
                                                   {
                                                       <option id="@b.Id">@b.Id</option>
                                                   }
@@ -125,7 +125,7 @@
         });
 
         $('input[name=add]').click(function () {
-            $.getJSON('/RentOfPremises/Insert?premisesId=' + $('select[name=premises]').val() +
+            $.getJSON('/Rents/Insert?premiseId=' + $('select[name=premises]').val() +
                 '&organizationId=' + $('select[name=org]').find(":selected").attr("id") +
                 '&arrivalDate=' + $('input[name=arrival]').val() +
                 '&dateOfDeparture=' + $('input[name=departure]').val(), null);
@@ -133,14 +133,14 @@
         });
 
         $('input[name=del]').click(function () {
-            $.getJSON('/RentOfPremises/Delete?id=' + $('input[name=number]').val(), null);
+            $.getJSON('/Rents/Delete?id=' + $('input[name=number]').val(), null);
             $('.selected').remove();
             getMsg('Удалено');
         });
 
         $('input[name=upd]').click(function () {
-            $.getJSON('/RentOfPremises/Update?id=' + $('input[name=number]').val() +
-                '&premisesId=' + $('select[name=premises]').val() +
+            $.getJSON('/Rents/Update?id=' + $('input[name=number]').val() +
+                '&premiseId=' + $('select[name=premises]').val() +
                 '&organizationId=' + $('select[name=org]').find(":selected").attr("id") +
                 '&arrivalDate=' + $('input[name=arrival]').val() +
                 '&dateOfDeparture=' + $('input[name=departure]').val(), null);

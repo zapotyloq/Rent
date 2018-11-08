@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentOfPremises.Models
 {
-    public class Premises
+    public class Premise
     {
         public int Id { get; set; }
         public int Area { get; set; }
@@ -14,9 +14,8 @@ namespace RentOfPremises.Models
         public string FloorPlan { get; set; }
         public string Photos { get; set; }
 
-        //[ForeignKey("BuildingNumber")]
         public virtual Building Building { get; set; }
 
-        public virtual ICollection<RentOfPremises> RentOfPremises { get; set; }
+        public virtual ICollection<Rent> Rents { get; set; }
     }
 }

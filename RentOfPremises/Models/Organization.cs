@@ -11,6 +11,6 @@ namespace RentOfPremises.Models
         public string Name { get; set; }
         public string Mail { get; set; }
 
-        public virtual ICollection<RentOfPremises> RentOfPremises { get; set; }
+        public virtual ICollection<Rent> Rents { get; set; }
     }
 }

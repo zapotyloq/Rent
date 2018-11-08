@@ -14,16 +14,16 @@ namespace RentOfPremises.Models
 
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Building> Buildings { get; set; }
-        public DbSet<Premises> Premises { get; set; }
-        public DbSet<RentOfPremises> RentOfPremises { get; set; }
+        public DbSet<Premise> Premises { get; set; }
+        public DbSet<Rent> Rents { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Building>().HasMany(p => p.Premises).WithOne(p => p.Building).HasForeignKey(p => p.BuildingNumber);
-            modelBuilder.Entity<Premises>().HasMany(p => p.RentOfPremises).WithOne(p => p.Premises);
-            modelBuilder.Entity<Organization>().HasMany(p => p.RentOfPremises).WithOne(p => p.Organization);
-            modelBuilder.Entity<RentOfPremises>().HasMany(p => p.Invoices).WithOne(p => p.RentOfPremises);
+            modelBuilder.Entity<Premise>().HasMany(p => p.Rents).WithOne(p => p.Premise);
+            modelBuilder.Entity<Organization>().HasMany(p => p.Rents).WithOne(p => p.Organization);
+            modelBuilder.Entity<Rent>().HasMany(p => p.Invoices).WithOne(p => p.Rent);
             base.OnModelCreating(modelBuilder);
         }
     }

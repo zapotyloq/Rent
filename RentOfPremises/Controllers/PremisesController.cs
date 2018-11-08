@@ -24,7 +24,7 @@ namespace RentOfPremises.Controllers
         {
             int pageSize = 10;  // количество элементов на странице
 
-            IQueryable<Premises> source = db.Premises;
+            IQueryable<Premise> source = db.Premises;
             await source.ForEachAsync(d => d.Building = db.Buildings.Where(p => p.Id == d.BuildingNumber).First());
 
             if (id != null && id != 0)
@@ -76,7 +76,7 @@ namespace RentOfPremises.Controllers
         [HttpGet]
         public ActionResult Insert(int area, int buildingNumber, string floorPlan, string photos)
         {
-            Premises premises = new Premises
+            Premise premise = new Premise
             {
                 Area = area,
                 BuildingNumber = buildingNumber,
@@ -84,43 +84,43 @@ namespace RentOfPremises.Controllers
                 FloorPlan = floorPlan,
                 Photos = photos
             };
-            db.Premises.Add(premises);
+            db.Premises.Add(premise);
             db.SaveChanges();
-            JsonResult data = Json(premises);
+            JsonResult data = Json(premise);
             return data;
         }
 
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            Premises premises = null;
+            Premise premise = null;
             try
             {
-                premises = db.Premises.Where(c => c.Id == id).First();
-                db.Premises.Remove(premises);
+                premise = db.Premises.Where(c => c.Id == id).First();
+                db.Premises.Remove(premise);
                 db.SaveChanges();
             }
             catch { }
-            JsonResult data = Json(premises);
+            JsonResult data = Json(premise);
             return data;
         }
 
         [HttpGet]
         public ActionResult Update(int id, int area, int buildingNumber, string floorPlan, string photos)
         {
-            Premises premises = null;
+            Premise premise = null;
             try
             {
-                premises = db.Premises.Where(c => c.Id == id).First();
-                premises.Area = area;
-                premises.BuildingNumber = buildingNumber;
-                premises.Building = db.Buildings.Where(p => p.Id == buildingNumber).First();
-                premises.FloorPlan = floorPlan;
-                premises.Photos = photos;
+                premise = db.Premises.Where(c => c.Id == id).First();
+                premise.Area = area;
+                premise.BuildingNumber = buildingNumber;
+                premise.Building = db.Buildings.Where(p => p.Id == buildingNumber).First();
+                premise.FloorPlan = floorPlan;
+                premise.Photos = photos;
                 db.SaveChanges();
             }
             catch { }
-            JsonResult data = Json(premises);
+            JsonResult data = Json(premise);
             return data;
         }
     }

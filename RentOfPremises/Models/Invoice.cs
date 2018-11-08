@@ -15,6 +15,6 @@ namespace RentOfPremises.Models
         public double Total { get; set; }
         public string Bailee { get; set; }
         [ForeignKey("RentId")]
-        public virtual RentOfPremises RentOfPremises { get; set; }
+        public virtual Rent Rent { get; set; }
     }
 }

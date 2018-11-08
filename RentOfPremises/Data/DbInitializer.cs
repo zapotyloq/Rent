@@ -52,27 +52,27 @@ namespace RentOfPremises.Data
 
             for( int i = 0; i < premisesLength; i++)
             {
-                Premises premises = new Premises
+                Premise premise = new Premise
                 {
                     BuildingNumber = rand.Next(1, buildingsLength - 1),
                     Area = rand.Next(20, 300),
                     FloorPlan = GetRandomString(voc, 20),
                     Photos = GetRandomString(voc, 20)
                 };
-                db.Premises.Add(premises);
+                db.Premises.Add(premise);
             }
             db.SaveChanges();
 
             for( int i = 0; i < rentOfPremisesLength; i++)
             {
-                Models.RentOfPremises rent = new Models.RentOfPremises
+                Models.Rent rent = new Models.Rent
                 {
                     OrganizationId = rand.Next(1, organizationsLength),
-                    PremisesId = rand.Next(1, premisesLength),
+                    PremiseId = rand.Next(1, premisesLength),
                     ArrivalDate = new DateTime(2000, 1, 1).AddDays(rand.Next(0, 6000)),
                     DateOfDeparture = new DateTime(2018, 1, 1).AddDays(rand.Next(0, 1000))
                 };
-                db.RentOfPremises.Add(rent);
+                db.Rents.Add(rent);
             }
             db.SaveChanges();
 

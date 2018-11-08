@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RentOfPremises.ViewModels.RentOfPremises
+namespace RentOfPremises.ViewModels.Rents
 {
     public class SortViewModel
     {
         public SortState IdSort { get; private set; }
-        public SortState PremisesIdSort { get; private set; }
+        public SortState PremiseIdSort { get; private set; }
         public SortState OrganizationNameSort { get; private set; }
         public SortState ArrivalDateSort { get; private set; }
         public SortState DateOfDepartureSort { get; private set; }
@@ -17,7 +17,7 @@ namespace RentOfPremises.ViewModels.RentOfPremises
         public SortViewModel(SortState sortOrder)
         {
             IdSort = sortOrder == SortState.IdAsc ? SortState.IdDesc : SortState.IdAsc;
-            PremisesIdSort = sortOrder == SortState.PremisesIdAsc ? SortState.PremisesIdDesc : SortState.PremisesIdAsc;
+            PremiseIdSort = sortOrder == SortState.PremiseIdAsc ? SortState.PremiseIdDesc : SortState.PremiseIdAsc;
             OrganizationNameSort = sortOrder == SortState.OrganizationNameAsc ? SortState.OrganizationNameDesc : SortState.OrganizationNameAsc;
             ArrivalDateSort = sortOrder == SortState.ArrivalDateAsc ? SortState.ArrivalDateDesc : SortState.ArrivalDateAsc;
             DateOfDepartureSort = sortOrder == SortState.DateOfDepartureAsc ? SortState.DateOfDepartureDesc : SortState.DateOfDepartureAsc;

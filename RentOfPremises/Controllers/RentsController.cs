@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RentOfPremises.Models;
 using RentOfPremises.ViewModels;
-using RentOfPremises.ViewModels.RentOfPremises;
+using RentOfPremises.ViewModels.Rents;
 using Microsoft.EntityFrameworkCore;
 
 namespace RentOfPremises.Controllers
 {
-    public class RentOfPremisesController : Controller
+    public class RentsController : Controller
     {
         ApplicationContext db;
 
-        public RentOfPremisesController(ApplicationContext db)
+        public RentsController(ApplicationContext db)
         {
             this.db = db;
         }
@@ -24,8 +24,8 @@ namespace RentOfPremises.Controllers
         {
             int pageSize = 10;  // количество элементов на странице
 
-            IQueryable<Models.RentOfPremises> source = db.RentOfPremises;
-            await source.ForEachAsync(d => d.Premises = db.Premises.Where(p => p.Id == d.PremisesId).First());
+            IQueryable<Models.Rent> source = db.Rents;
+            await source.ForEachAsync(d => d.Premise = db.Premises.Where(p => p.Id == d.PremiseId).First());
             await source.ForEachAsync(d => d.Organization = db.Organizations.Where(p => p.Id == d.OrganizationId).First());
 
 
@@ -40,11 +40,11 @@ namespace RentOfPremises.Controllers
 
             switch (sortOrder)
             {
-                case SortState.PremisesIdDesc:
-                    source = source.OrderByDescending(s => s.PremisesId);
+                case SortState.PremiseIdDesc:
+                    source = source.OrderByDescending(s => s.PremiseId);
                     break;
-                case SortState.PremisesIdAsc:
-                    source = source.OrderBy(s => s.PremisesId);
+                case SortState.PremiseIdAsc:
+                    source = source.OrderBy(s => s.PremiseId);
                     break;
                 case SortState.IdDesc:
                     source = source.OrderByDescending(s => s.Id);
@@ -83,25 +83,25 @@ namespace RentOfPremises.Controllers
                 Organizations = db.Organizations,
                 Premises = db.Premises,
                 SortViewModel = new SortViewModel(sortOrder),
-                FilterViewModel = new FilterViewModel(db.RentOfPremises.ToList(), id, name)
+                FilterViewModel = new FilterViewModel(db.Rents.ToList(), id, name)
             };
             return View(viewModel);
         }
 
         [HttpGet]
-        public ActionResult Insert(int premisesId, int organizationId, DateTime arrivalDate, DateTime dateOfDeparture)
+        public ActionResult Insert(int premiseId, int organizationId, DateTime arrivalDate, DateTime dateOfDeparture)
         {
-            Models.RentOfPremises rent = new Models.RentOfPremises
+            Models.Rent rent = new Models.Rent
             {
-                PremisesId = premisesId,
+                PremiseId = premiseId,
                 OrganizationId = organizationId,
                 ArrivalDate = arrivalDate,
                 DateOfDeparture = dateOfDeparture,
 
                 Organization = db.Organizations.Where(p => p.Id == organizationId).First(),
-                Premises = db.Premises.Where(p => p.Id == premisesId).First()
+                Premise = db.Premises.Where(p => p.Id == premiseId).First()
             };
-            db.RentOfPremises.Add(rent);
+            db.Rents.Add(rent);
             db.SaveChanges();
             JsonResult data = Json(rent);
             return data;
@@ -110,11 +110,11 @@ namespace RentOfPremises.Controllers
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            Models.RentOfPremises rent = null;
+            Models.Rent rent = null;
             try
             {
-                rent = db.RentOfPremises.Where(c => c.Id == id).First();
-                db.RentOfPremises.Remove(rent);
+                rent = db.Rents.Where(c => c.Id == id).First();
+                db.Rents.Remove(rent);
                 db.SaveChanges();
             }
             catch { }
@@ -123,19 +123,19 @@ namespace RentOfPremises.Controllers
         }
 
         [HttpGet]
-        public ActionResult Update(int id, int premisesId, int organizationId, DateTime arrivalDate, DateTime dateOfDeparture)
+        public ActionResult Update(int id, int premiseId, int organizationId, DateTime arrivalDate, DateTime dateOfDeparture)
         {
-            Models.RentOfPremises rent = null;
+            Models.Rent rent = null;
             try
             {
-                rent = db.RentOfPremises.Where(c => c.Id == id).First();
-                rent.PremisesId = premisesId;
+                rent = db.Rents.Where(c => c.Id == id).First();
+                rent.PremiseId = premiseId;
                 rent.OrganizationId = organizationId;
                 rent.ArrivalDate = arrivalDate;
                 rent.DateOfDeparture = dateOfDeparture;
 
                 rent.Organization = db.Organizations.Where(p => p.Id == organizationId).First();
-                rent.Premises = db.Premises.Where(p => p.Id == premisesId).First();
+                rent.Premise = db.Premises.Where(p => p.Id == premiseId).First();
                 db.SaveChanges();
             }
             catch { }

@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RentOfPremises.Models;
 
-namespace RentOfPremises.ViewModels.RentOfPremises
+namespace RentOfPremises.ViewModels.Rents
 {
     public class FilterViewModel
     {
-        public SelectList RentOfPremises { get; private set; }
+        public SelectList Rents { get; private set; }
         public int? SelectedId { get; private set; }
         public string SelectedName { get; private set; }
 
-        public FilterViewModel(List<Models.RentOfPremises> rents, int? id, string name)
+        public FilterViewModel(List<Models.Rent> rents, int? id, string name)
         {
-            rents.Insert(0, new Models.RentOfPremises { Id = 0 });
-            RentOfPremises = new SelectList(rents, "Id", name, id);
+            rents.Insert(0, new Models.Rent { Id = 0 });
+            Rents = new SelectList(rents, "Id", name, id);
             SelectedId = id;
             SelectedName = name;
         }

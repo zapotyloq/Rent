@@ -8,7 +8,7 @@ namespace RentOfPremises.ViewModels.Premises
 {
     public class IndexViewModel
     {
-        public IEnumerable<Models.Premises> Premises { get; set; }
+        public IEnumerable<Models.Premise> Premises { get; set; }
         public IEnumerable<Models.Building> Buildings { get; set; }
         public PageViewModel PageViewModel { get; set; }
         public FilterViewModel FilterViewModel { get; set; }

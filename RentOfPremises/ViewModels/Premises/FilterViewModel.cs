@@ -13,9 +13,9 @@ namespace RentOfPremises.ViewModels.Premises
         public int? SelectedId { get; private set; }
         public string SelectedName { get; private set; }
 
-        public FilterViewModel(List<Models.Premises> premises, int? id, string name)
+        public FilterViewModel(List<Models.Premise> premises, int? id, string name)
         {
-            premises.Insert(0, new Models.Premises { Id = 0 });
+            premises.Insert(0, new Models.Premise { Id = 0 });
             Premises = new SelectList(premises, "Id", name, id);
             SelectedId = id;
             SelectedName = name;

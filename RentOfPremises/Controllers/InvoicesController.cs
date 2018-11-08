@@ -25,7 +25,7 @@ namespace RentOfPremises.Controllers
             int pageSize = 10;  // количество элементов на странице
 
             IQueryable<Invoice> source = db.Invoices;
-            await source.ForEachAsync(d => d.RentOfPremises = db.RentOfPremises.Where(p => p.Id == d.RentId).First());
+            await source.ForEachAsync(d => d.Rent = db.Rents.Where(p => p.Id == d.RentId).First());
 
 
             if (id != null && id != 0)
@@ -79,7 +79,7 @@ namespace RentOfPremises.Controllers
             {
                 PageViewModel = pageViewModel,
                 Invoices = items,
-                Rents = db.RentOfPremises,
+                Rents = db.Rents,
                 SortViewModel = new SortViewModel(sortOrder),
                 FilterViewModel = new FilterViewModel(db.Invoices.ToList(), id, name)
             };
@@ -97,7 +97,7 @@ namespace RentOfPremises.Controllers
                 Total = total,
                 Bailee = bailee,
 
-                RentOfPremises = db.RentOfPremises.Where(p => p.Id == rentId).First(),
+                Rent = db.Rents.Where(p => p.Id == rentId).First(),
             };
             db.Invoices.Add(invoice);
             db.SaveChanges();
@@ -133,7 +133,7 @@ namespace RentOfPremises.Controllers
                 invoice.Total = total;
                 invoice.Bailee = bailee;
 
-                invoice.RentOfPremises = db.RentOfPremises.Where(p => p.Id == rentId).First();
+                invoice.Rent = db.Rents.Where(p => p.Id == rentId).First();
                 db.SaveChanges();
             }
             catch { }

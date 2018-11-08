@@ -18,21 +18,21 @@ use RentOfPremisesByOrganizations
 create table dbo.Buildings (Id int identity(1,1) not null, Name nvarchar(50), Mail nvarchar(50), NumberOfStoreys int, Characteristic nvarchar(200), primary key (Id));
 create table dbo.Premises (Id int identity(1,1) not null, Area int, BuildingNumber int, FloorPlan nvarchar(200), Photos nvarchar(200), primary key(Id));
 create table dbo.Organizations (Id int identity(1,1) not null, Name nvarchar(50), Mail nvarchar(50), primary key(Id));
-create table dbo.RentOfPremises (Id int identity(1,1) not null, PremisesId int, OrganizationId int, ArrivalDate date, DateOfDeparture date, primary key(Id));
+create table dbo.Rents (Id int identity(1,1) not null, PremiseId int, OrganizationId int, ArrivalDate date, DateOfDeparture date, primary key(Id));
 create table dbo.Invoices (Id int identity(1,1) not null, DateOfPayment date, RentId int, Mounth int, Total float, Bailee nvarchar(50), primary  key(Id));
 
 --Добавление связей между таблицами
 alter table dbo.Premises with check add constraint Fk_Premises_Buildings foreign key(BuildingNumber)
 references dbo.Buildings (Id) on delete cascade
 go
-alter table dbo.RentOfPremises with check add constraint Fk_RentOfPremises_Premises foreign key(PremisesId)
+alter table dbo.Rents with check add constraint Fk_Rents_Premises foreign key(PremiseId)
 references dbo.Premises (Id) on delete cascade
 go
-alter table dbo.RentOfPremises with check add constraint Fk_RentOfPremises_Organizations foreign key(OrganizationId)
+alter table dbo.Rents with check add constraint Fk_Rents_Organizations foreign key(OrganizationId)
 references dbo.Organizations (Id) on delete cascade
 go
-alter table dbo.Invoices with check add constraint Fk_Invoices_RentOfPremises foreign key(RentId)
-references dbo.RentOfPremises (Id) on delete cascade
+alter table dbo.Invoices with check add constraint Fk_Invoices_Rents foreign key(RentId)
+references dbo.Rents (Id) on delete cascade
 go
 --
 set nocount on
@@ -163,13 +163,13 @@ begin tran
   end
 
 --инфрмация о аренде 10000
- select @i = 0 from dbo.RentOfPremises with(tablockx) where 1 = 0
+ select @i = 0 from dbo.Rents with(tablockx) where 1 = 0
  set @RowCount = 1
  while @RowCount <= @NumberRents
   begin
    set @dIn = dateadd(day,-RAND()*15000,GETDATE())
    set @dOut = dateadd(DAY,rand()*3600,GETDATE())
-   insert into dbo.RentOfPremises(PremisesId, OrganizationId, ArrivalDate, DateOfDeparture)
+   insert into dbo.Rents(PremiseId, OrganizationId, ArrivalDate, DateOfDeparture)
    select
    CAST( (1+RAND()*(@NumberPremises-1)) as int),
    CAST( (1+RAND()*(@NumberOrganizations-1)) as int),
@@ -210,11 +210,11 @@ go
 create view [dbo].[View_FullInffoRentOfPremises]
 
 as
-select RentOfPremises.Id, PremisesId, Buildings.Name as BuildingName, Organizations.Name as OrganizationName, ArrivalDate, DateOfDeparture
-                    from RentOfPremises inner join Organizations
-                    on RentOfPremises.OrganizationId = Organizations.Id
+select Rents.Id, PremiseId, Buildings.Name as BuildingName, Organizations.Name as OrganizationName, ArrivalDate, DateOfDeparture
+                    from Rents inner join Organizations
+                    on Rents.OrganizationId = Organizations.Id
                     inner join Premises
-                    on RentOfPremises.PremisesId = Premises.Id
+                    on Rents.PremiseId = Premises.Id
                     inner join Buildings
                     on Premises.BuildingNumber = Buildings.Id
 go
@@ -232,10 +232,10 @@ create proc my_proc1
 as
 begin
 select Buildings.Name as BuildingName, Organizations.Name, Organizations.Mail, Premises.Id as PremisesId, Invoices.DateOfPayment, Invoices.Total
-from RentOfPremises inner join Premises on RentOfPremises.PremisesId = Premises.Id
-inner join Organizations on RentOfPremises.OrganizationId = Organizations.Id
+from Rents inner join Premises on Rents.PremiseId = Premises.Id
+inner join Organizations on Rents.OrganizationId = Organizations.Id
 inner join Buildings on Premises.BuildingNumber = Buildings.Id
-inner join Invoices on RentOfPremises.Id = Invoices.RentId
+inner join Invoices on Rents.Id = Invoices.RentId
 where Buildings.Name = @building_name and
 Invoices.DateOfPayment >= @d0 and Invoices.DateOfPayment <= @d
 end;
@@ -248,8 +248,8 @@ create proc my_proc2
 as
 begin
 select Buildings.Name, Organizations.Id, Organizations.Name, Organizations.Mail, Premises.Id as PremisesId, ArrivalDate, DateOfDeparture
-from RentOfPremises inner join Premises on RentOfPremises.PremisesId = Premises.Id
-inner join Organizations on RentOfPremises.OrganizationId = Organizations.Id
+from Rents inner join Premises on Rents.PremiseId = Premises.Id
+inner join Organizations on Rents.OrganizationId = Organizations.Id
 inner join Buildings on Premises.BuildingNumber = Buildings.Id
 where Buildings.Name = @building_name and
 ArrivalDate >= @d0 and DateOfDeparture <= @d
@@ -261,10 +261,10 @@ create proc my_proc3
 as
 begin
 select Organizations.Id, Organizations.Name, Organizations.Mail, Premises.Id as PremisesId, Buildings.Name, ArrivalDate, DateOfDeparture
-from RentOfPremises inner join Premises on RentOfPremises.PremisesId = Premises.Id
-inner join Organizations on RentOfPremises.OrganizationId = Organizations.Id
+from Rents inner join Premises on Rents.PremiseId = Premises.Id
+inner join Organizations on Rents.OrganizationId = Organizations.Id
 inner join Buildings on Premises.BuildingNumber = Buildings.Id
-inner join Invoices on RentOfPremises.Id = Invoices.RentId
+inner join Invoices on Rents.Id = Invoices.RentId
 where DateOfDeparture >= @d and Invoices.DateOfPayment <= @d
 end;
 go

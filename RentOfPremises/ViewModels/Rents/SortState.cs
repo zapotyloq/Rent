@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RentOfPremises.ViewModels.RentOfPremises
+namespace RentOfPremises.ViewModels.Rents
 {
     public enum SortState
     {
         IdAsc,
         IdDesc,
-        PremisesIdAsc,
-        PremisesIdDesc,
+        PremiseIdAsc,
+        PremiseIdDesc,
         OrganizationNameAsc,
         OrganizationNameDesc,
         ArrivalDateAsc,

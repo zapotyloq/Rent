@@ -84,7 +84,7 @@
             <td><label class="control-label">Номер аренды</label></td>
             <td colspan="2">
                 <select name="rents">
-                    @foreach (RentOfPremises b in Model.Rents)
+                    @foreach (Rent b in Model.Rents)
                     {
                         <option id="@b.Id">@b.Id</option>
                     }
