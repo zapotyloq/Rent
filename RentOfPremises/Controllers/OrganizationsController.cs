@@ -8,6 +8,8 @@ using RentOfPremises.ViewModels;
 using RentOfPremises.ViewModels.Organizations;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using RentOfPremises.Infrastructure;
+using RentOfPremises.Infrastructure.Filters;
 
 namespace RentOfPremises.Controllers
 {
@@ -19,10 +21,24 @@ namespace RentOfPremises.Controllers
         {
             this.db = db;
         }
-
+        
+        [SetToSession("Organizations")]
         public async Task<IActionResult> Index(int? id, string name, int page = 1,
             SortState sortOrder = SortState.IdAsc)
         {
+            var sessionOrganizations = HttpContext.Session.Get("Organizations");
+            if(sessionOrganizations != null)
+            {
+                if(sessionOrganizations.Keys.Contains("id"))
+                    id = Convert.ToInt32(sessionOrganizations["id"]);
+                if(sessionOrganizations.Keys.Contains("name"))
+                    name = sessionOrganizations["name"];
+                if(sessionOrganizations.Keys.Contains("page"))
+                    page = Convert.ToInt32(sessionOrganizations["page"]);
+                if(sessionOrganizations.Keys.Contains("sortOrder"))
+                    sortOrder = (SortState)Enum.Parse(typeof(SortState), sessionOrganizations["sortOrder"]);
+            }
+
             int pageSize = 10;  // количество элементов на странице
 
             IQueryable<Organization> source = db.Organizations;
@@ -72,7 +88,7 @@ namespace RentOfPremises.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> InfoForThePeriod(string buildingName = "", string d0="01.01.1970", string d= "01.01.2030", int page = 1)
+        public async Task<IActionResult> InfoForThePeriod(string buildingName = "", string d0 = "01.01.1970", string d = "01.01.2030", int page = 1)
         {
             int pageSize = 10;  // количество элементов на странице
             List<object[]> source = new List<object[]>();
@@ -99,7 +115,7 @@ namespace RentOfPremises.Controllers
                 DbDataReader reader = await command.ExecuteReaderAsync();
                 if (reader.HasRows)
                 {
-                    while(await reader.ReadAsync())
+                    while (await reader.ReadAsync())
                     {
                         object[] item = new object[reader.FieldCount];
                         reader.GetValues(item);
@@ -210,6 +226,44 @@ namespace RentOfPremises.Controllers
                 Objects = items,
             };
             return View(viewModel);
+        }
+
+        public IQueryable<Organization> SortSearch(IQueryable<Organization> source, SortState sortOrder, int? id, string name, int pageSize, int page = 1)
+        {
+            if (id != null && id != 0)
+            {
+                source = source.Where(p => p.Id == id);
+            }
+            if (!String.IsNullOrEmpty(name))
+            {
+                source = source.Where(p => p.Name.Contains(name));
+            }
+
+            switch (sortOrder)
+            {
+                case SortState.NameDesc:
+                    source = source.OrderByDescending(s => s.Name);
+                    break;
+                case SortState.NameAsc:
+                    source = source.OrderBy(s => s.Name);
+                    break;
+                case SortState.IdDesc:
+                    source = source.OrderByDescending(s => s.Id);
+                    break;
+                case SortState.MailAsc:
+                    source = source.OrderBy(s => s.Mail);
+                    break;
+                case SortState.MailDesc:
+                    source = source.OrderByDescending(s => s.Mail);
+                    break;
+                default:
+                    source = source.OrderBy(s => s.Id);
+                    break;
+            }
+            
+            var items = source.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            return items.AsQueryable();
         }
 
         [HttpGet]

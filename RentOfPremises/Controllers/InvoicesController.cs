@@ -7,6 +7,8 @@ using RentOfPremises.Models;
 using RentOfPremises.ViewModels;
 using RentOfPremises.ViewModels.Invoices;
 using Microsoft.EntityFrameworkCore;
+using RentOfPremises.Infrastructure;
+using RentOfPremises.Infrastructure.Filters;
 
 namespace RentOfPremises.Controllers
 {
@@ -19,9 +21,23 @@ namespace RentOfPremises.Controllers
             this.db = db;
         }
 
+        [SetToSession("Invoices")]
         public async Task<IActionResult> Index(int? id, string name, int page = 1,
             SortState sortOrder = SortState.IdAsc)
         {
+            var sessionOrganizations = HttpContext.Session.Get("Invoices");
+            if (sessionOrganizations != null)
+            {
+                if (sessionOrganizations.Keys.Contains("id"))
+                    id = Convert.ToInt32(sessionOrganizations["id"]);
+                if (sessionOrganizations.Keys.Contains("name"))
+                    name = sessionOrganizations["name"];
+                if (sessionOrganizations.Keys.Contains("page"))
+                    page = Convert.ToInt32(sessionOrganizations["page"]);
+                if (sessionOrganizations.Keys.Contains("sortOrder"))
+                    sortOrder = (SortState)Enum.Parse(typeof(SortState), sessionOrganizations["sortOrder"]);
+            }
+
             int pageSize = 10;  // количество элементов на странице
 
             IQueryable<Invoice> source = db.Invoices;
