@@ -1,0 +1,164 @@
+﻿@using RentOfPremises.Models
+@using RentOfPremises.ViewModels
+@using RentOfPremises.ViewModels.Rents
+@model IndexViewModel
+@addTagHelper "*, RentOfPremises"
+@{
+    ViewData["Title"] = "Rents";
+}
+<h1>Список аренд</h1>
+<form method="get">
+    <div class="form-inline">
+        <label class="control-label">Номер: </label>
+            @Html.TextBox("Id", Model.FilterViewModel.SelectedId, htmlAttributes: new { @class = "form-control" })
+
+        @*<label class="control-label">Название: </label>
+        @Html.TextBox("Name", Model.FilterViewModel.SelectedName,
+                htmlAttributes: new { @class = "form-control" })*@
+
+        <input type="submit" value="Поиск" class="btn btn-default" />
+    </div>
+</form>
+<br />
+<div class="cell">
+    <table class="table"  id="data">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index"
+                       asp-route-sortOrder="@(Model.SortViewModel.IdSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.PremiseIdSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Номер помещения</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.OrganizationNameSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Организация</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.ArrivalDateSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Дата въезда</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@(Model.SortViewModel.DateOfDepartureSort)"
+                       asp-route-Organization="@(Model.FilterViewModel.SelectedId)">Дата выезда</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Rent u in Model.Rents)
+            {
+                <tr><td>@u.Id</td><td>@u.PremiseId</td><td id="@u.OrganizationId">@u.Organization.Name</td>
+                                                  <td>@String.Format("{0:yyyy-MM-dd}", u.ArrivalDate)</td>
+                                                  <td>@String.Format("{0:yyyy-MM-dd}", u.DateOfDeparture)</td></tr>
+            }
+        </tbody>
+    </table>
+    <page-link page-model="@Model.PageViewModel" page-action="Index"
+               page-url-company="@(Model.FilterViewModel.SelectedId)"
+               page-url-sortorder="@(Model.SortViewModel.Current)"></page-link>
+</div>
+<form name="edit" class="cell">
+    <h3>Редактирование данных</h3><br/>
+    <table class="table">
+                                      <tr>
+                                          <td><label class="control-label">Номер</label></td>
+                                          <td colspan="2"><input type="text" name="number" readonly class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Номер помещения</label></td>
+                                          <td colspan="2">
+                                              <select name="premises">
+                                                  @foreach (Premise b in Model.Premises)
+                                                  {
+                                                      <option id="@b.Id">@b.Id</option>
+                                                  }
+                                              </select>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Организация</label></td>
+                                          <td colspan="2">
+                                              <select name="org">
+                                                  @foreach (Organization b in Model.Organizations)
+                                                  {
+                                                  <option id="@b.Id">@b.Name</option>
+                                                  }
+                                              </select>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Дата въезда</label></td>
+                                          <td colspan="2"><input type="date" name="arrival" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><label class="control-label">Дата выезда</label></td>
+                                          <td colspan="2"><input type="date" name="departure" class="form-control" /></td>
+                                      </tr>
+                                      <tr>
+                                          <td><input type="button" name="add" value="Добавить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="del" value="Удалить" class="btn btn-default" /></td>
+                                          <td><input type="button" name="upd" value="Обновить" class="btn btn-default" /></td>
+                                      </tr>
+    </table>
+    <div id="msg_display"></div>
+</form>
+<script type="text/javascript">
+    $(function () {
+        $('#data tbody tr').first().addClass('selected');
+        $('input[name=number]').val($('.selected td')[0].innerText);
+        $('select[name=premises]').val($('.selected td')[1].innerHTML);
+        $('select[name=org]').val($('.selected td')[2].innerHTML);
+        $('input[name=arrival]').val($('.selected td')[3].innerHTML);
+        $('input[name=departure]').val($('.selected td')[4].innerHTML);
+
+        $('#data tbody tr').click(function () {
+            $('#data tbody tr').removeClass('selected');
+            $('input[name=number]').val($(this).children('td')[0].textContent);
+            $('select[name=premises]').val($(this).children('td')[1].textContent);
+            $('select[name=org]').val($(this).children('td')[2].textContent);
+            $('input[name=arrival]').val($(this).children('td')[3].textContent);
+            $('input[name=departure]').val($(this).children('td')[4].textContent);
+            $(this).addClass('selected');
+        });
+
+        $('input[name=add]').click(function () {
+            $.getJSON('/Rents/Insert?premiseId=' + $('select[name=premises]').val() +
+                '&organizationId=' + $('select[name=org]').find(":selected").attr("id") +
+                '&arrivalDate=' + $('input[name=arrival]').val() +
+                '&dateOfDeparture=' + $('input[name=departure]').val(), null);
+            getMsg('Добавлено');
+        });
+
+        $('input[name=del]').click(function () {
+            $.getJSON('/Rents/Delete?id=' + $('input[name=number]').val(), null);
+            $('.selected').remove();
+            getMsg('Удалено');
+        });
+
+        $('input[name=upd]').click(function () {
+            $.getJSON('/Rents/Update?id=' + $('input[name=number]').val() +
+                '&premiseId=' + $('select[name=premises]').val() +
+                '&organizationId=' + $('select[name=org]').find(":selected").attr("id") +
+                '&arrivalDate=' + $('input[name=arrival]').val() +
+                '&dateOfDeparture=' + $('input[name=departure]').val(), null);
+            $('.selected').children('td')[1].textContent = $('select[name=premises]').val();
+            $('.selected').children('td')[2].textContent = $('select[name=org]').val();
+            $('.selected').children('td')[3].textContent = $('input[name=arrival]').val();
+            $('.selected').children('td')[4].textContent = $('input[name=departure]').val();
+            getMsg('Обновлено');
+        });
+    
+        function getMsg(msg) {
+            if (msg == undefined)
+                msg = 'Ошибка';
+            $('#msg_display').text(msg);
+            $('#msg_display').css('display', 'block');
+            $('#msg_display').fadeOut(2000, function () {
+                $('#msg_display').css('display', 'none');
+            });
+        }
+    });
+</script>
