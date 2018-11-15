@@ -22,11 +22,11 @@ namespace RentOfPremises.Controllers
         }
         
         [SetToSession("Premises")]
-        public async Task<IActionResult> Index(int? id, string name, int page = 1,
+        public async Task<IActionResult> Index(int? id, string name, int page = 0,
             SortState sortOrder = SortState.IdAsc)
         {
             var sessionOrganizations = HttpContext.Session.Get("Premises");
-            if (sessionOrganizations != null)
+            if (sessionOrganizations != null && id == null && name == null && page == 0 && sortOrder == SortState.IdAsc)
             {
                 if (sessionOrganizations.Keys.Contains("id"))
                     id = Convert.ToInt32(sessionOrganizations["id"]);
@@ -37,7 +37,10 @@ namespace RentOfPremises.Controllers
                 if (sessionOrganizations.Keys.Contains("sortOrder"))
                     sortOrder = (SortState)Enum.Parse(typeof(SortState), sessionOrganizations["sortOrder"]);
             }
-
+            if(page == 0)
+            {
+                page = 1;
+            }
             int pageSize = 10;  // количество элементов на странице
 
             IQueryable<Premise> source = db.Premises;
