@@ -9,7 +9,7 @@ namespace RentOfPremises.Data
 {
     public class DbInitializer
     {
-        public static void Initialize(ApplicationContext db)
+        public static void Initialize(Models.ApplicationContext db)
         {
             db.Database.EnsureCreated();
             if (db.Organizations.Any())

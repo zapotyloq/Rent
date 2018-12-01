@@ -10,9 +10,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using RentOfPremises.Infrastructure;
 using RentOfPremises.Infrastructure.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentOfPremises.Controllers
 {
+    [Authorize(Roles = "user")]
     public class OrganizationsController : Controller
     {
         ApplicationContext db;

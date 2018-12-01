@@ -9,9 +9,11 @@ using RentOfPremises.ViewModels.Buildings;
 using Microsoft.EntityFrameworkCore;
 using RentOfPremises.Infrastructure;
 using RentOfPremises.Infrastructure.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentOfPremises.Controllers
 {
+    [Authorize(Roles = "user")]
     public class BuildingsController : Controller
     {
         ApplicationContext db;

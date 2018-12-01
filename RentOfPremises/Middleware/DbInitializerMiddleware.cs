@@ -17,7 +17,7 @@ namespace RentOfPremises.Middleware
             this.next = next;
         }
 
-        public Task Invoke(HttpContext context, ApplicationContext db)
+        public Task Invoke(HttpContext context, Models.ApplicationContext db)
         {
             DbInitializer.Initialize(db);
             return next.Invoke(context);

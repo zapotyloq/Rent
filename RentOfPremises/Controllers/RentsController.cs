@@ -9,9 +9,11 @@ using RentOfPremises.ViewModels.Rents;
 using Microsoft.EntityFrameworkCore;
 using RentOfPremises.Infrastructure;
 using RentOfPremises.Infrastructure.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentOfPremises.Controllers
 {
+    [Authorize(Roles = "user")]
     public class RentsController : Controller
     {
         ApplicationContext db;
